@@ -14,7 +14,7 @@ spec:
   interval: 2m
   chart:
     spec:
-      chart: ./helm/
+      chart: ../helm/
       sourceRef:
         kind: GitRepository
         name: flux
