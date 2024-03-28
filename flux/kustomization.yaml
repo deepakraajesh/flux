@@ -2,3 +2,4 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
 kind: Kustomization
 resources:
   - ./git-repo.yaml
+  - ./nginx-helm.yaml
