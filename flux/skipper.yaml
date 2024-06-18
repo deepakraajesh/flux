@@ -1,12 +1,12 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: skipper
+  name: skipper-test
   namespace: devops
   annotations:
     fluxcd.io/automated: "true"
 spec:
-  releaseName: skipper
+  releaseName: skipper-test
   install:
     timeout: 20m
   upgrade:
