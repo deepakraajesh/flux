@@ -5,6 +5,7 @@ metadata:
   namespace: devops
 spec:
   interval: 1m
-  url: https://github.com/deepakraajesh/flux
+  url: https://github.com/nithesh-balaji-unbxd/flux-test
   ref:
     branch: main
+    tag: v0.0.1
