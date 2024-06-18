@@ -6,7 +6,7 @@ metadata:
   annotations:
     fluxcd.io/automated: "true"
 spec:
-  releaseName: nginx
+  releaseName: skipper
   install:
     timeout: 20m
   upgrade:
