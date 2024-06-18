@@ -1,0 +1,48 @@
+{
+  "duplicate": {
+    "synonyms": "Unable to add Synonyms. Either the keyword or one of the bi-directional synonyms is already present in the existing synonym set. Note: Terms sharing the same word root are considered duplicates. E.g. “shoes” & “shoe” are considered duplicates and only one of them can be added.",
+    "mandatory": "Unable to add Concept because it is already present. Note: Terms sharing the same word root are considered duplicates. E.g. “shoes” & “shoe” are considered duplicates and only one of them can be added.",
+    "multiwords": "Unable to add Phrase because it is already present.Note: Phrases sharing the same word root are considered duplicates. E.g. “protection gel” & “protect gel” are considered duplicates and only one of them can be added.",
+    "stemdict": "Unable to add stemmed keyword because it is already present. Note: One term can have only one stemmed version.",
+    "default": "Unable to add dictionary. Stemmed version of the keyword is already present in the existing dictionary set. Note: Terms sharing the same word root are considered duplicates. E.g. shoes & shoe are considered duplicates and only one of them can be added."
+  },
+  "symbols": {
+    "synonyms": "Unable to add Synonyms. The following characters are not accepted by our system : ‘ , ‘ ( comma) , ‘+’ (plus), '{', '}' (curly braces), '*' (Asterix),'&' (Ampersand) , ‘\\’ (backslash)",
+    "mandatory": "Unable to add Concepts. The following characters are not accepted by our system : ‘ , ‘ ( comma) , ‘+’ (plus), '{', '}' (curly braces), '*' (Asterix),'&' (Ampersand) , ‘\\’ (backslash)",
+    "multiwords": "Unable to add Phrase. The following characters are not accepted by our system : ‘ , ‘ ( comma) , ‘+’ (plus), '{', '}' (curly braces), '*' (Asterix),'&' (Ampersand) , ‘\\’ (backslash)",
+    "default": "Unable to add dictionary. The following characters are not accepted by our system : ‘ , ‘ (comma) , ‘+’ (plus), '{', '}' (curly braces), '*' (Asterix), '&' (Ampersand) , ‘\\’ (backslash)"
+  },
+  "emptiness": {
+    "default": "Unable to add dictionary due to empty entry."
+  },
+  "stopwords": {
+    "default": "Stopword validation failed for keyword: "
+  },
+  "multiterm": {
+    "default": "Phrases must contain at-least two words separated by a space."
+  },
+  "alphaNumeric": {
+    "default": "Please provide a valid alphanumeric value for entry: "
+  },
+  "singleterm": {
+    "default": "Only single term/word keywords are accepted. Kindly specify stemmed versions of each term/word individually."
+  },
+  "productCount": {
+    "default": "Product count validation failed, no products exist in the uploaded feed for: "
+  },
+  "redundantSynonym": {
+    "synonyms": "Redundant entry found while trying to add synonyms: "
+  },
+  "stemwordsEmptiness": {
+    "stemdict": "Please provide the ‘Stemmed word’ for entry: "
+  },
+  "excludeTermsEmptiness": {
+    "excludeTerms": "Please provide ‘exclude terms’ for entry: "
+  },
+  "blacklist": {
+    "default": "This AI entry is consists blacklisted terms : "
+  },
+  "blacklistReasons": {
+    "default": "Blacklist reason is not present for entry : "
+  }
+}

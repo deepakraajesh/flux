@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: site-migration
+  namespace: ss
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+        - name: site-migration
+          image: 012629307706.dkr.ecr.us-east-1.amazonaws.com/skipper:site-migration
+          imagePullPolicy: Always
+          env:
+            - name: mongo_host
+              value: "mongodb://mongodb-shard1-0.mongodb-shard1-headless-service:27017,mongodb-shard1-1.mongodb-shard1-headless-service:27017,mongodb-shard1-2.mongodb-shard1-headless-service:27017/?replicaSet=Shard1"
+            - name: s3_location_for_sites
+              value: "s3://ss-unbxd-ap-southeast-2/sites/sites.csv"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: aws-secret
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: aws-secret
+      restartPolicy: Never

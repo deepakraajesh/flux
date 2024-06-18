@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - ./git-repo.yaml
   - ./nginx-helm.yaml
+  - ./skipper.yaml

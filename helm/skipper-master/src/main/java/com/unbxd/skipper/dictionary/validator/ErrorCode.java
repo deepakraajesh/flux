@@ -1,0 +1,33 @@
+package com.unbxd.skipper.dictionary.validator;
+
+public enum ErrorCode {
+
+    SYMBOLS(50050),
+    DUPLICATE(50000),
+    EMPTINESS(50005),
+    MULTITERM(50010),
+    STOPWORDS(50015),
+    SINGLETERM(50020),
+    EMPTY_FILE(50060),
+    ALPHA_NUMERIC(50070),
+    PRODUCT_COUNT(50025),
+    EMPTY_SYNONYM(50065),
+    S3_ERROR(50031),
+    DATABASE_ERROR(50030),
+    REDUNDANT_SYNONYM(50045),
+    CSV_TRANSFORM_ERROR(50035),
+    STEMWORDS_EMPTINESS(50055),
+    UPLOAD_SIZE_EXCEEDED(50040),
+    EXCLUDE_TERMS_EMPTINESS(50075),
+    EXCLUDE_TERMS_DELIMITER(50085),     /* latest */
+    EXCLUDE_TERMS_REDUNDANCY(50080),
+    JSON_PARSE_ERROR(50081),
+    BLACKLIST_VALIDATION(50082),
+    DOWNSTREAM_ERROR(50083);
+
+    private int code;
+
+    public int getCode() { return code; }
+
+    ErrorCode(int code) { this.code = code; }
+}

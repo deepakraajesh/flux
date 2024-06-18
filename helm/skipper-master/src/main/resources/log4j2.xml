@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="RandomAccessFile" target="SYSTEM_OUT" >
+            <JsonLayout compact="true" eventEol="true" locationInfo="true" stacktraceAsString="true">
+                <KeyValuePair key="Unbxd-Request-Id" value="$${ctx:Unbxd-Request-Id}"/>
+                <KeyValuePair key="Site-Key" value="$${ctx:siteKey}"/>
+                <KeyValuePair key="user" value="$${ctx:email}"/>
+            </JsonLayout>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO" includeLocation="true">
+            <AppenderRef ref="RandomAccessFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,43 @@
+{{- if .Values.envoy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ include "skipper.fullname" . }}-envoy'
+  labels:
+    {{- toYaml .Values.envoy.selectorLabels  | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- toYaml .Values.envoy.selectorLabels  | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.envoy.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- toYaml .Values.envoy.selectorLabels | nindent 8 }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.envoy.configMapName }}
+      containers:
+        - name: {{ include "skipper.fullname" . }}-envoy
+          image: {{ .Values.envoy.image.repository }}:{{ .Values.envoy.image.tag }}
+          imagePullPolicy: {{ .Values.envoy.image.pullPolicy }}
+          ports:
+            - containerPort: 1000
+              protocol: TCP
+          command:
+            - envoy
+            - "-c"
+            - "/etc/config/envoy.yaml"
+          resources:
+            {{- toYaml .Values.envoy.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/config"
+{{- end }}

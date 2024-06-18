@@ -1,0 +1,1004 @@
+{
+	"info": {
+		"_postman_id": "e58dca0e-5a05-432a-b15d-50b01aefb0f9",
+		"name": "skipper",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17126609"
+	},
+	"item": [
+		{
+			"name": "create site",
+			"item": [
+				{
+					"name": "Create site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"bodyData = JSON.parse(responseBody)",
+									"if(bodyData.hasOwnProperty(\"data\")) {",
+									"    value = bodyData.data.dbDocId",
+									"    pm.environment.set(\"docId\",value);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"site_name\": \"test-backend-testcase1\",\n    \"environment\": \"Development\",\n    \"vertical\": \"apparel\",\n    \"platform\": \"Magento\",\n    \"language\": \"en\",\n    \"regions\": \"us\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site"
+							]
+						},
+						"description": "This testcases will create a random site and get the siteKey"
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch site details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"retryOnFailure(\"SITE_CREATED\",3);",
+									"",
+									"function retryOnFailure(successState, maxNumberOfTries)",
+									"{",
+									"",
+									"bodyData = JSON.parse(responseBody)",
+									"//var maxNumberOfTries = 3;",
+									"var sleepBetweenTries = 30000;",
+									"",
+									"if (!pm.environment.get(\"collection_tries\")) {",
+									"    pm.environment.set(\"collection_tries\", 1);",
+									"}",
+									"console.log(\"state is \" + bodyData.data.serveState.stateType);",
+									"if ((bodyData.data.serveState.stateType != successState) && (pm.environment.get(\"collection_tries\") < maxNumberOfTries)) {",
+									"     var tries = parseInt(pm.environment.get(\"collection_tries\"), 10);",
+									"     pm.environment.set(\"collection_tries\", tries + 1);",
+									"     setTimeout(function() {}, sleepBetweenTries);",
+									"     postman.setNextRequest(request.name);",
+									"",
+									"     console.log('Retrying: ' + request.name + '\\nGot: ' + bodyData.data.serveState.stateType + ' Expected: ' + successState + '\\nWaited: ' + sleepBetweenTries / 5000 + 'sec  \\nRetry Number: ' + tries + ' of ' + maxNumberOfTries);",
+									"",
+									" } else {",
+									"     pm.environment.unset(\"collection_tries\");",
+									"",
+									"     pm.test(\"Status code is \" + successState, function () {",
+									"          pm.response.to.have.status(200);",
+									"          pm.expect(bodyData.data.serveState.stateType).to.equal(successState)",
+									"     });",
+									"}",
+									"}",
+									"",
+									"",
+									"bodyData = JSON.parse(responseBody)",
+									"value = bodyData.data.siteKey",
+									"console.log(value)",
+									"pm.environment.set(\"site_key\",value);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/statusById/{{docId}}?=",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"statusById",
+								"{{docId}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						},
+						"description": "This api testcase will featch the siteKey and add it in feed upload api"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "state",
+			"item": [
+				{
+					"name": "transition to FILE_FEED_SELECT state",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/onboard/state/FILE_FEED_SELECT",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"onboard",
+								"state",
+								"FILE_FEED_SELECT"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify if the state is FILE_FEED_SELECT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"bodyData = JSON.parse(responseBody)",
+									"pm.expect(bodyData.data.serveState.stateType).to.equal(\"FILE_FEED_SELECT\")",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/statusById/{{docId}}?=",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"statusById",
+								"{{docId}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						},
+						"description": "This api testcase will featch the siteKey and add it in feed upload api"
+					},
+					"response": []
+				},
+				{
+					"name": "transition to FILE_FEED_UPLOAD state",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/onboard/state/FILE_FEED_UPLOAD",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"onboard",
+								"state",
+								"FILE_FEED_UPLOAD"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify if the state is FILE_FEED_UPLOAD",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"bodyData = JSON.parse(responseBody)",
+									"pm.expect(bodyData.data.serveState.stateType).to.equal(\"FILE_FEED_UPLOAD\")",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/statusById/{{docId}}?=",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"statusById",
+								"{{docId}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						},
+						"description": "This api testcase will featch the siteKey and add it in feed upload api"
+					},
+					"response": []
+				},
+				{
+					"name": "transition to FILE_FEED_UPLOAD_COMPLETE state",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/onboard/state/FILE_FEED_UPLOAD_COMPLETE",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"onboard",
+								"state",
+								"FILE_FEED_UPLOAD_COMPLETE"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify if the state is FILE_FEED_UPLOAD_COMPLETE",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"bodyData = JSON.parse(responseBody)",
+									"pm.expect(bodyData.data.serveState.stateType).to.equal(\"FILE_FEED_UPLOAD_COMPLETE\")",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							},
+							{
+								"key": "x-xsrf-token",
+								"value": "{{_un_csrf}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/statusById/{{docId}}?=",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"statusById",
+								"{{docId}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						},
+						"description": "This api testcase will featch the siteKey and add it in feed upload api"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "dictionary",
+			"item": [
+				{
+					"name": "Add synonyms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"entries\":[{\"name\":\"shirt\",\"oneWay\":[\"kurta\"],\"twoWay\":[]}]}"
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=ai",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ai"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch synonyms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=ai",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ai"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dictionary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entries\": [\n        {\n            \"id\": \"{{synonymId}}\",\n            \"name\": \"army green\",\n            \"twoWay\": [\n                \"emerald\",\n                \"green\",\n                \"olive\"\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=ai",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ai"
+								}
+							]
+						},
+						"description": "This API updates the existing entry in the synonyms. Use `Fetch Dictionary` API to get the right dictionary entry. Copy the `id` from the response, which will be unique identifier represents the correct row.\n\n- **dictionary-type**: can have 3 values: ai, front, bck \n- **dictionary**: can have following values: synonyms, multiwords, stopwords, stemdict, excludeTerms\n- **sso-cookie**: `un_sso_uid` cookie that needs to be fetched from the browser after logging into the console. If one logs in  through the unbxd google account, Then will have access to the all the API's"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Synonyms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"entries\": [{\n       \"id\": \"{{synonymId}}\"\n     }]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=ai",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ai"
+								}
+							]
+						},
+						"description": "This API deletes the existing entry of dictionary. Use `Fetch Dictionary` API to get the right dictionary entry. Copy the `id` from the response, which will be unique identifier represents the correct row. \n\n- **dictionary-type**: can have 3 values: ai, front, bck \n- **dictionary**: can have following values: synonyms, multiwords, stopwords, stemdict, excludeTerms\n- **sso-cookie**: `un_sso_uid` cookie that needs to be fetched from the browser after logging into the console. If one logs in  through the unbxd google account, Then will have access to the all the API's"
+					},
+					"response": []
+				},
+				{
+					"name": "Validate there is no synonyms after deleting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=ai",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ai"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch synonyms with search(validate queries are coming up as expected)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=ai&search=ii",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ai"
+								},
+								{
+									"key": "search",
+									"value": "ii"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate there are synonyms after bulk upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "_un_sso_uid={{_un_sso_uid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{skipperUrl}}/skipper/site/{{site_key}}/dictionary/synonyms?type=bck",
+							"host": [
+								"{{skipperUrl}}"
+							],
+							"path": [
+								"skipper",
+								"site",
+								"{{site_key}}",
+								"dictionary",
+								"synonyms"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "bck"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "deleteSite",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//pm.test(\"verify the status of siteDeletion\", function () {",
+							"    //var jsonData = pm.response.json();",
+							"    //pm.expect(jsonData.data.skipper).to.eql(\"site deleted successfully.\");",
+							"//});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "_un_sso_uid={{_un_sso_uid}}",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "x-xsrf-token",
+						"value": "{{_un_csrf}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{skipperUrl}}/skipper/site/{{site_key}}",
+					"host": [
+						"{{skipperUrl}}"
+					],
+					"path": [
+						"skipper",
+						"site",
+						"{{site_key}}"
+					]
+				},
+				"description": "Get the siteKey from create site api and delete it"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "site_key",
+			"value": "skipper-test-123"
+		}
+	]
+}

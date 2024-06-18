@@ -1,0 +1,47 @@
+{
+  "front": {
+    "synonyms": "skipper-synonyms",
+    "stemdict": "skipper-stemdict-front",
+    "stopwords": "skipper-stopwords-front",
+    "mandatory": "skipper-mandatory-front",
+    "multiwords": "skipper-multiwords-front",
+    "asciiMapping": "skipper-mapping-FoldToASCII",
+    "excludeTerms": "skipper-excludeTermsSet-front"
+  },
+  "bck": {
+    "stemdict": "skipper-stemdict",
+    "stopwords": "skipper-stopwords",
+    "mandatory": "skipper-mandatory",
+    "synonyms": "skipper-synonyms-bck",
+    "multiwords": "skipper-multiwords",
+    "excludeTerms": "skipper-excludeTermsSet",
+    "asciiMapping": "skipper-mapping-FoldToASCII"
+  },
+  "ai": {
+    "synonyms": "skipper-synonyms-ai",
+    "stemdict": "skipper-stemdict-ai",
+    "stopwords": "skipper-stopwords-ai",
+    "mandatory": "skipper-mandatory-ai",
+    "multiwords": "skipper-multiwords-ai",
+    "excludeTerms": "skipper-excludeTermsSet-ai",
+    "asciiMapping": "skipper-mapping-FoldToASCII"
+  },
+  "suggested": {
+    "synonyms": "skipper-synonyms-suggested",
+    "stemdict": "skipper-stemdict-suggested",
+    "stopwords": "skipper-stopwords-suggested",
+    "mandatory": "skipper-mandatory-suggested",
+    "multiwords": "skipper-multiwords-suggested",
+    "excludeTerms": "skipper-excludeTermsSet-suggested",
+    "asciiMapping": "skipper-mapping-FoldToASCII"
+  },
+  "blacklist": {
+    "synonyms": "skipper-synonyms-blacklist",
+    "stemdict": "skipper-stemdict-blacklist",
+    "stopwords": "skipper-stopwords-blacklist",
+    "mandatory": "skipper-mandatory-blacklist",
+    "multiwords": "skipper-multiwords-blacklist",
+    "excludeTerms": "skipper-excludeTermsSet-blacklist",
+    "asciiMapping": "skipper-mapping-FoldToASCII"
+  }
+}

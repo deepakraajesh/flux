@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nginx
+  namespace: devops
+  annotations:
+    fluxcd.io/automated: "true"
+spec:
+  releaseName: nginx
+  install:
+    timeout: 20m
+  upgrade:
+    timeout: 20m
+  interval: 2m
+  chart:
+    spec:
+      chart: ../helm/skipper-master/
+      sourceRef:
+        kind: GitRepository
+        name: flux
+  targetNamespace: devops

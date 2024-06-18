@@ -1,0 +1,26 @@
+# this config is for ssdev
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: variants-migration
+  namespace: ss
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+        - name: variants-migration
+          image: 012629307706.dkr.ecr.us-east-1.amazonaws.com/skipper:variants-migration
+          imagePullPolicy: Always
+          env:
+            - name: gimli_url
+              value: "http://gimli.search"
+            - name: skipper_url
+              value: "http://skipper.ss"
+            - name: brewer_url
+              value: "http://brewer.search"
+            - name: admin_cookie
+              value: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjpudWxsLCJleHBpcnkiOiIyMDIxLTA5LTI0IDA4OjU5OjE5IFVUQyIsImVtYWlsIjoiZGV2MzlAeW9wbWFpbC5jb20iLCJyZWdpb25zIjp7InVzIjp7InJlZl91c2VyX2lkIjo4MTIwNH19fQ.d_tJ3KZHtd1TYJ2ScGWV_URm47WZhoNHvEmRm6uQVc0"
+            - name: mongo_host
+              value: "mongodb://mongos-headless-service.search:27017"
+      restartPolicy: Never

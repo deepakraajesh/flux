@@ -1,0 +1,91 @@
+# Default values for skipper.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: us.gcr.io/unbxdgcp/skipper
+  pullPolicy: Always
+  tag: "v1.17"
+
+postUpgradeImage:
+  repository: us.gcr.io/unbxdgcp/skipper-post-upgrade
+  pullPolicy: Always
+  tag: "v1.17"
+
+datacenter:
+  json: {"data":{"regions":[{"id":"us-gcp","name":"us","lat_long":"37.0902N,95.7129W","type":"GCP","skipperEndPoint":"https://console-g-nam.unbxd.io"},{"id":"us","name":"us","lat_long":"37.0902N,95.7129W","type":"AWS","skipperEndPoint":"https://console-nam.unbxd.io"},{"id":"sg","name":"sg","lat_long":"1.3521N,103.8198E","type":"AWS","skipperEndPoint":"https://console-apac.unbxd.io"},{"id":"uk","name":"uk","lat_long":"55.3781N,3.4360W","type":"AWS","skipperEndPoint":"https://console-uk.unbxd.io"},{"id":"au","name":"au","lat_long":"25.2744S,133.7751E","type":"AWS","skipperEndPoint":"https://console-anz.unbxd.io"}]}}
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+selectorLabels:
+  app: skipper
+  env: pilot-rc
+  region: us-east4
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations:
+    {}
+
+ingress:
+  enabled: true
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: skipper.pilot-rc-unbxd.infra
+      paths:
+      - path: /
+        backend:
+          serviceName: skipper
+          servicePort: 80
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+     cpu: 900m
+     memory: 2048Mi
+  requests:
+     cpu: 600m
+     memory: 2048Mi
+
+AWS_ACCESS_KEY_ID: "QUtJQVFGNEdENkU1SVVRVlJTVVk="
+AWS_SECRET_ACCESS_KEY: "M0dmdVJGc0ZGczJ5SHJSYnNxbmJQMGlWaDdnWXdzWVdiM1dVRGxYcQ=="
+
+envVars:
+  - name: "SYSTEM_OPTS"
+    value: "-Dssobase.url=http://console-proxy.prod.use-1d.infra/v1/ -Dconsole.url=http://console-proxy.prod.use-1d.infra/ -Dpim.url=https://pim.unbxd.io/  -Dmongo=mongodb://mongos-headless-service.search:27017/ -Dpim-searchapp.url=https://search-pimapps.unbxd.io/setup/  -Dfeed.url=http://pilotrc-feed.unbxd.io/ -Dfeed.healthcheck=ping  -Dgimli.url=http://gimli.search/ -Dgimli.healthcheck=api/getHealthStatus.do -Drelevancy.url=http://relevance-workflow:80 -Drelevancy.healthcheck=/v1.0/relevancy/live -Dconsole-backend.healthcheck=/app/ping -Dconsole-backend.url=https://console-g-nam.unbxd.io -Dsearch.url=http://brewer.search/ -Dsearch.healthcheck=monitor -Ddomain.name=skipper.pilot-rc-unbxd.infra -Dasterix.url=http://asterix.search/ -Dasterix.healthcheck=monitor -DHagrid.url=http://hagrid-ambassador.search/  -DHagrid.healthcheck=api/monitor -Dpim.internal.url=http://paprika.pimento.us-west-1.infra/ -Dpim.internal.healthcheck=api/monitor -Dmozart.url=http://mozart.search/ -Dmozart.healthcheck=ping -Dregion=us-gcp -Daws-region=us-east-1 -DAWS_DEFAULT_REGION=us-east-1 -Dconsumer.url=http://toucan/ -Dconsumer.healthcheck=monitor -Dviper.url=https://search-pimapps.unbxd.io/ -Dshopify.healthcheck=/ -Dfacet.authKey=\"Basic Ym90QHVuYnhkLmNvbToyMHVuOHhkMTA=\" -DselfServe.s3Bucket=ss-unbxd-us-east-1 -DautosuggestThreshold=0.0f -Dgcp.project.Id=unbxd-marketplace-public -Dgcp.subscription.Id=unbxd-marketplace -Dgcp.activation.url=https://console-g-nam.unbxd.io -Dgcp.activation.healthcheck=/ss/ui/healthcheck -Dis_gcp=true"
+  - name: "JAVA_OPTS"
+    value: "-XX:ParallelGCThreads=5 -XX:ConcGCThreads=2 -XX:+PrintGCDetails -XX:+UseContainerSupport -XX:+UnlockExperimentalVMOptions  -XshowSettings:vm -XX:MaxRAMPercentage=70.0"
+  - name: "AWS_DEFAULT_REGION"
+    value: "us-east-1"
+  - name: "GOOGLE_CLOUD_PROJECT"
+    value: "unbxd-marketplace-public"
+  - name: "GOOGLE_APPLICATION_CREDENTIALS"
+    value: "/skipper/keys/secret-key.json"
+
+
+mongo:
+ connectionString: "mongodb://mongos-headless-service.search:27017"
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
