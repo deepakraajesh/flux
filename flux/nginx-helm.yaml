@@ -14,7 +14,7 @@ spec:
   interval: 2m
   chart:
     spec:
-      chart: ../helm/nginx/
+      chart: ../helm/nginx-1/
       sourceRef:
         kind: GitRepository
         name: flux

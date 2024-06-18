@@ -1,0 +1,21 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: nginx
+  namespace: devops
+  labels:
+    deploymentName: nginx
+spec:
+  cooldownPeriod: 60
+  minReplicaCount: 2
+  scaleTargetRef:
+    name: nginx
+  advanced:
+    restoreToOriginalReplicaCount: true
+  triggers:
+  - type: cron
+    metadata:
+      timezone: Asia/Kolkata
+      start: 35 23 * * *
+      end: 45 23 * * *
+      desiredReplicas: "10"
