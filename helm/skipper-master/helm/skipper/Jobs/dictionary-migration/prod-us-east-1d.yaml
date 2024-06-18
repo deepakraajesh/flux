@@ -1,0 +1,24 @@
+# this config is for prod use
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dictionary-migration
+  namespace: ss
+spec:
+  ttlSecondsAfterFinished: 900
+  template:
+    spec:
+      containers:
+        - name: dictionary-migration
+          image: 012629307706.dkr.ecr.us-east-1.amazonaws.com/skipper:dictionary-migration
+          imagePullPolicy: Always
+          env:
+            - name: gimli_url
+              value: "http://gimli.prod.use-1d.infra"
+            - name: skipper_url
+              value: "http://skipper.ss"
+            - name: admin_cookie
+              value: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjpudWxsLCJleHBpcnkiOiIyMDIyLTA2LTAyIDA3OjQ4OjMyIFVUQyIsImVtYWlsIjoieW9nZW5kcmEucEB1bmJ4ZC5jb20iLCJyZWdpb25zIjp7InVzIjp7InJlZl91c2VyX2lkIjo4MDg0OX0sInNnIjp7InJlZl91c2VyX2lkIjo0MDR9LCJ1ayI6eyJyZWZfdXNlcl9pZCI6MzcwfSwiYXUiOnsicmVmX3VzZXJfaWQiOjM4NX0sInVzX2djcCI6eyJyZWZfdXNlcl9pZCI6MzgxfX19.qh6MmyabXXtajN0UWErd02vb5_LHVWjNLj3BZrxr1Kw"
+            - name: mongo_host
+              value: "mongodb://mongos1.nodes.prod.use-1d.infra:27014,mongos2.nodes.prod.use-1d.infra:27014,mongos3.nodes.prod.use-1d.infra:27014"
+      restartPolicy: Never

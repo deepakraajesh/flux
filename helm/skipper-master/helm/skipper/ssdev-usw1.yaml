@@ -8,12 +8,12 @@ image:
   repository: 012629307706.dkr.ecr.us-east-1.amazonaws.com/skipper
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "v1.28.1"
 
 postUpgradeImage:
   repository: 012629307706.dkr.ecr.us-east-1.amazonaws.com/skipper-post-upgrade
   pullPolicy: Always
-  tag: "latest"
+  tag: "v1.27.5"
 
 datacenter:
   json: {"data":{"regions":[{"id":"us-gcp","name":"us","lat_long":"37.0902N,95.7129W","type":"GCP","skipperEndPoint":"https://console-g-nam.unbxd.io"},{"id":"us","name":"us","lat_long":"37.0902N,95.7129W","type":"AWS","skipperEndPoint":"https://console-nam.unbxd.io"},{"id":"sg","name":"sg","lat_long":"1.3521N,103.8198E","type":"AWS","skipperEndPoint":"https://console-apac.unbxd.io"},{"id":"uk","name":"uk","lat_long":"55.3781N,3.4360W","type":"AWS","skipperEndPoint":"https://console-uk.unbxd.io"},{"id":"au","name":"au","lat_long":"25.2744S,133.7751E","type":"AWS","skipperEndPoint":"https://console-anz.unbxd.io"}]}}
@@ -22,15 +22,13 @@ selectorLabels:
   app: skipper
   env: ssdev
   region: us-west-1
-podAnnotations: {}
+podAnnotations:
+  rollme: "ramdom value" # change this value to force redeploy skipper during helm upgrade
 
-imagePullSecrets: 
-  - name: regcred
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-
-podAnnotations: {}
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -49,13 +47,13 @@ service:
   annotations: {}
 
 ingress:
-  enabled: false
-  annotations: 
+  enabled: true
+  annotations:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: skipper.argocd.qa1.us-west-1.infra	
-      paths: 
+    - host: skipper.argocd.qa1.us-west-1.infra
+      paths:
       - path: /
         backend:
           serviceName: skipper
@@ -83,16 +81,27 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+     cpu: 900m
+     memory: 2048Mi
+  requests:
+     cpu: 600m
+     memory: 2048Mi
 
 AWS_ACCESS_KEY_ID: "QUtJQVFGNEdENkU1SVVRVlJTVVk="
 AWS_SECRET_ACCESS_KEY: "M0dmdVJGc0ZGczJ5SHJSYnNxbmJQMGlWaDdnWXdzWVdiM1dVRGxYcQ=="
 
 envVars:
   - name: SYSTEM_OPTS
-    value: "-Dssobase.url=http://ssdevconsole-ui.unbxd.io/v1/ -Dconsole.url=https://6fb53a3f-b689-4187-b455-fc365756af43.mock.pstmn.io/  -Dpim.url=http://pimdev.unbxd.io/ -Dmongo=mongodb://mongodb-headless-service:27017 -Dpim-searchapp.url=https://shopify-ssdev.unbxd.io/setup/  -Dfeed.url=http://wingman-feed.search/ -Dfeed.healthcheck=monitor -Dgimli.url=https://45e380a5-94b5-4fb0-b4ae-7d956dd89f78.mock.pstmn.io/ -Dgimli.healthcheck=api/getHealthStatus.do -Drelevancy.url=http://relevance-workflow -Drelevancy.healthcheck=/v1.0/relevancy/live  -Dconsole-backend.url=https://9cf42ac5-e485-4fd3-8242-dba7ea1729d9.mock.pstmn.io/ -Dsearch.url=http://brewer.search/ -Dsearch.healthcheck=monitor -Ddomain.name=skipper.argocd.qa1.us-west-1.infra  -Dasterix.url=https://d34d0a12-01b2-494f-8f86-f1f495aec87d.mock.pstmn.io/ -Dasterix.healthcheck=monitor -DHagrid.url=https://f0226dac-8b15-4366-bb4a-498918354b33.mock.pstmn.io/ -DHagrid.healthcheck=hello -Dconsumer.url=http://toucan -Dregion=us -Daws-region=us-west-1 -Dmozart.url=http://mozart.search -Dpim.internal.url=http://pimdev.unbxd.io/paprika/ -Dpim.internal.healthcheck=/monitor   -DselfServe.s3Bucket=ss-unbxd-us-west-1 -DAWS_DEFAULT_REGION=us-west-1 -Dviper.url=https://shopify-ssdev.unbxd.io/ -Dconsole.prod.url=https://console-nam.unbxd.io/ -Dtest=true -DautosuggestThreshold=0.0f"
+    value: "-Dssobase.url=http://ssdevconsole-ui.unbxd.io/v1/ -Dconsole.url=https://ssdevconsole-ui.unbxd.io/  -Dpim.url=http://pimdev.unbxd.io/ -Dmongo=mongodb://skipper-mongodb-0.skipper-mongodb-headless:27017,skipper-mongodb-1.skipper-mongodb-headless:27017/?replicaSet=rs0 -Dpim-searchapp.url=https://shopify-ssdev.unbxd.io/setup/  -Dfeed.url=http://wingman-feed.search/ -Dfeed.healthcheck=monitor -Dgimli.url=http://gimli.search/ -Dgimli.healthcheck=api/getHealthStatus.do -Drelevancy.url=http://workflow-orchestrator.ss -Drelevancy.healthcheck=/monitor  -Dconsole-backend.url=https://ssdevconsole-nam.unbxd.io/ -Dsearch.url=http://brewer.search/ -Dsearch.healthcheck=monitor -Ddomain.name=skipper.argocd.qa1.us-west-1.infra  -Dasterix.url=http://obelix.search/ -Dasterix.healthcheck=monitor -DHagrid.url=http://hagrid.argocd.qa1.us-west-1.infra -DHagrid.healthcheck=hello -Dconsumer.url=http://toucan -Dregion=us -Daws-region=us-west-1 -Dmozart.url=http://mozart.search -Dpim.internal.url=http://pimdev.unbxd.io/paprika/ -Dpim.internal.healthcheck=/monitor   -DselfServe.s3Bucket=ss-unbxd-us-west-1 -DAWS_DEFAULT_REGION=us-west-1 -Dviper.url=https://shopify-ssdev.unbxd.io/ -Dconsole.prod.url=https://console-nam.unbxd.io/ -Dtest=true -DautosuggestThreshold=0.0f -Dargo.url=http://argo-server.search:2746/ -DsiteClone.argoNamespace=ss"
 
 mongo:
- connectionString: "mongodb://mongodb-headless-service:27017"
+ connectionString: "mongodb://skipper-mongodb-0.skipper-mongodb-headless:27017,skipper-mongodb-1.skipper-mongodb-headless:27017/?replicaSet=rs0"
 nodeSelector: {}
 
 tolerations: []
@@ -101,6 +110,14 @@ affinity: {}
 
 envoy:
   enabled: true
+
+  resources:
+    limits:
+      cpu: 900m
+      memory: 2048Mi
+    requests:
+      cpu: 600m
+      memory: 2048Mi
 
   service:
     type: ClusterIP
@@ -120,5 +137,17 @@ envoy:
 
   configMapName: envoy-config
 
-  podAnnotations:
-    checksum/config: "{{ include (print $.Template.BasePath \"envoy/configMap.yaml\") . | sha256sum }}"
+  podAnnotations: {}
+
+  upstreams:
+    statsdHost: 10.202.37.19
+    skipperUrl: skipper.ss
+    toucanUrl: toucan.ss
+    viperUrl: shopify-ssdev.unbxd.io
+    falconUrl: falcon.ss
+    asterixUrl: obelix.search
+    hagridUrl: hagrid.argocd.qa1.us-west-1.infra
+    consoleProxyUrl: console-proxy.console
+
+  ingress:
+    enabled: false

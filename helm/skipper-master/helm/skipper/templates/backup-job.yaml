@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup
+  namespace: ss
+spec:
+  schedule: "0 9 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup
+              image: {{ .Values.image.repository }}:backup
+              imagePullPolicy: Always
+              env:
+                - name: mongo_url
+                  value: "{{ .Values.mongo.connectionString }}"
+                - name: s3_location
+                  value: "s3://ss-unbxd-{{ .Values.selectorLabels.region }}/backup/prod/skipper"
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_ACCESS_KEY_ID
+                      name: aws-secret
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_SECRET_ACCESS_KEY
+                      name: aws-secret
+          restartPolicy: Never

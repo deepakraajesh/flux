@@ -10,7 +10,7 @@ metadata:
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
-    "helm.sh/hook":  post-install, post-upgrade
+    "helm.sh/hook": post-install, post-upgrade
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
@@ -24,15 +24,6 @@ spec:
         helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       restartPolicy: Never
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      initContainers:
-       - name: wait-for-webserver
-         image: curlimages/curl:latest
-         command: ["/bin/sh","-c"]
-         args: ["while [ $(curl -sw '%{http_code}' http://skipper/monitor -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the webserver...'; done"]
       containers:
       - name: install-skipper-setup-config
         image: "{{ .Values.postUpgradeImage.repository }}:{{ .Values.postUpgradeImage.tag }}"
@@ -42,5 +33,3 @@ spec:
             value: "{{ .Values.mongo.connectionString }}"
           - name: datacenter
             value: {{ .Values.datacenter.json | toJson | quote }}
-          - name: skipperHost
-            value: skipper

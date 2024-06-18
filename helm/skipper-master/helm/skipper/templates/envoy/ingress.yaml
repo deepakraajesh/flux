@@ -1,6 +1,6 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.envoy.ingress.enabled -}}
 {{- $fullName := include "skipper.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
+{{- $svcPort := .Values.envoy.service.port -}}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
 {{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -10,10 +10,10 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: '{{ include "skipper.fullname" . }}-envoy'
   labels:
-    {{- include "skipper.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    {{- toYaml .Values.envoy.selectorLabels | nindent 4 }}
+  {{- with .Values.envoy.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -21,9 +21,9 @@ spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.envoy.ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.envoy.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -32,7 +32,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range .Values.envoy.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -44,11 +44,11 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ $fullName }}-envoy
                 port:
                   number: {{ $svcPort }}
               {{- else }}
-              serviceName: {{ $fullName }}
+              serviceName: {{ $fullName }}-envoy
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}

@@ -11,10 +11,8 @@ spec:
       {{- toYaml .Values.envoy.selectorLabels  | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.envoy.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        rollme: {{ randAlphaNum 5 | quote }}
       labels:
         {{- toYaml .Values.envoy.selectorLabels | nindent 8 }}
     spec:
@@ -35,6 +33,10 @@ spec:
             - envoy
             - "-c"
             - "/etc/config/envoy.yaml"
+            - "--service-cluster"
+            - "skipper-envoy"
+            - "--service-node"
+            - "skipper-envoy"
           resources:
             {{- toYaml .Values.envoy.resources | nindent 12 }}
           volumeMounts:
