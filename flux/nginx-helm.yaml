@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: nginx-1
+  name: nginx
   namespace: devops
   annotations:
     fluxcd.io/automated: "true"
@@ -14,7 +14,7 @@ spec:
   interval: 2m
   chart:
     spec:
-      chart: ../helm/nginx-1/
+      chart: ../helm/nginx/
       sourceRef:
         kind: GitRepository
         name: flux

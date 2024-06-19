@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - ./git-repo.yaml
   - ./nginx-helm.yaml
-  - ./skipper.yaml
+  - ./kubeflow-kustomize/kubeflow-git-repo.yaml
+  - ./kubeflow-kustomize/

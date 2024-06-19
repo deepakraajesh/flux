@@ -1,6 +1,0 @@
-apiVersion: v2
-name: mongo
-description: Helm chart for mongos
-
-version:    "v1.0.0"
-appVersion: "v1.0.0"
