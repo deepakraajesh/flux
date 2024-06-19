@@ -1,14 +1,13 @@
-apiVersion: kustomize.toolkit.fluxcd.io/v1
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: kubeflow
   namespace: devops
 spec:
-  interval: 10m
-  targetNamespace: devops
-  sourceRef:
-    kind: GitRepository
-    name: kubeflow-git-repo
+  interval: 10m0s
   path: "./example"
   prune: true
-  timeout: 1m
+  sourceRef:
+    kind: GitRepository
+    name: kubeflow-manifests
+  validation: client
