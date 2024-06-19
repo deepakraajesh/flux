@@ -1,10 +1,10 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
-  name: kubeflow-git-repo
+  name: kubeflow-manifests
   namespace: devops
 spec:
-  interval: 1m
+  interval: 1m0s
   url: https://github.com/kubeflow/manifests
   ref:
-    branch: main
+    branch: master
