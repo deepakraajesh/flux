@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   # Git repositories
   - ../git-repo/nithesh-git-repo.yaml
-  #- ../git-repo/kubeflow-git-repo.yaml
+  - ../git-repo/kubeflow-git-repo.yaml
 
   # Helm releases
   - ../helm/nginx-helm.yaml

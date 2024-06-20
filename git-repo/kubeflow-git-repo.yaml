@@ -8,4 +8,4 @@ spec:
   url: https://github.com/kubeflow/manifests
   ref:
     branch: master
-    tag: v1.8.1
+    tag: v1.8.0
