@@ -6,7 +6,7 @@ resources:
   - ../git-repo/kubeflow-git-repo.yaml
 
   # Helm releases
-  - ../helm/nginx-helm.yaml
+  #- ../helm/nginx-helm.yaml
 
   # Kustomization
   - ../kubeflow-kustomize/kustomization.yaml
